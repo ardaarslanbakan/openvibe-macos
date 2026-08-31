@@ -58,6 +58,14 @@ remaining connection, packaging, and runtime issues to fix before it can be
 used reliably with EEG amplifiers. The acquisition-server packaging script is
 kept here to make that work easier to continue.
 
+Plugin coverage is also incomplete. Some boxes available in the Windows build
+are not present in this macOS build, including parts of the visualization
+toolkit and hardware-specific acquisition drivers. The boxes that are present
+have not all been tested on macOS; a plugin can compile successfully and still
+need additional work for its GUI, shared-library loading, or runtime behavior.
+For now, treat the available plugin list as a tested subset rather than a
+complete OpenViBE installation.
+
 ## Included scripts
 
 - `script/build_and_run.sh` — configure, build, package, and launch Designer
