@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="180" viewBox="0 0 720 180" role="img" aria-labelledby="title desc">
+  <title id="title">OpenViBE macOS Port</title>
+  <desc id="desc">A stylized brain waveform icon followed by the OpenViBE macOS Port name.</desc>
+  <rect width="720" height="180" rx="28" fill="#14213d"/>
+  <g fill="none" stroke="#62d6c7" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M126 127c-28 0-49-20-49-47 0-18 10-34 26-42 2-25 22-38 43-38 12 0 23 4 32 13 9-9 20-13 32-13 21 0 41 13 43 38 16 8 26 24 26 42 0 27-21 47-49 47Z"/>
+    <path d="M178 18v109M126 39c13 8 18 19 18 32M230 39c-13 8-18 19-18 32M106 87h38M212 87h38M144 71l17 16-17 18M212 71l-17 16 17 18"/>
+    <path d="M42 131h25l12-27 16 42 17-66 18 51 18-27 18 27 18-42 18 42 15-18 15 18" stroke="#f6bd60"/>
+  </g>
+  <text x="320" y="82" fill="#ffffff" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="42" font-weight="700">OpenViBE</text>
+  <text x="323" y="124" fill="#b8c4d6" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="24">personal macOS port</text>
+</svg>

@@ -1,5 +1,13 @@
 # OpenViBE macOS Port
 
+<p align="center">
+  <img src="docs/images/logo.svg" width="240" alt="OpenViBE personal macOS port">
+</p>
+
+[![License](https://img.shields.io/badge/license-AGPL--3.0-blue)](https://www.gnu.org/licenses/agpl-3.0.html)
+[![Platform](https://img.shields.io/badge/platform-macOS-lightgrey)](https://www.apple.com/macos/)
+[![Repository](https://img.shields.io/badge/GitHub-openvibe--macOS-181717?logo=github)](https://github.com/ardaarslanbakan/openvibe-macos)
+
 This is my personal effort to run OpenViBE 3.2.0 on macOS. I am keeping the
 macOS configuration, source patches, and packaging scripts here so that I can
 rebuild the application and track the changes in one place.
