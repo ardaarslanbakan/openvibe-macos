@@ -19,11 +19,12 @@ licenses, so check their notices as well.
 
 ## Local build
 
-1. Get the matching OpenViBE 3.2.0 source trees and place them in `work/`, as
-   described in `script/build_and_run.sh`.
-2. Install the macOS build dependencies (CMake, GTK2 compatibility/runtime,
-   the required Homebrew libraries, and a C++ toolchain).
-3. Run `script/build_and_run.sh` from the repository root.
+1. Get the matching OpenViBE 3.2.0 source trees and place them in `work/`.
+2. Run `script/setup_macos.sh --install-deps` from the repository root. The
+   script checks the source layout, creates the required links, builds Designer,
+   and launches the packaged app.
+
+Use `script/setup_macos.sh --check-only` to validate a machine without building.
 
 The script builds Designer, packages its framework and resources into an app
 bundle, installs the launcher and icon, and applies an ad-hoc signature so the
