@@ -1,30 +1,34 @@
 # OpenViBE macOS Port
 
-Build and packaging scripts for the OpenViBE 3.2.0 macOS port. This project
-keeps the reproducible macOS configuration and launcher scripts; downloaded
-upstream sources, dependency environments, build trees, and generated `.app`
-bundles are intentionally excluded from Git.
+This is my personal effort to run OpenViBE 3.2.0 on macOS. I am keeping the
+macOS configuration, source patches, and packaging scripts here so that I can
+rebuild the application and track the changes in one place.
+
+The large upstream source trees, local build directories, dependency files,
+and generated `.app` bundles are deliberately left out of Git. They can be
+recreated with the scripts in this repository.
 
 ## License
 
-OpenViBE and the derived port are distributed under the GNU Affero General
-Public License, version 3 (AGPLv3). Preserve the upstream copyright notices
-and `COPYING` files when obtaining and distributing the OpenViBE source. Any
-distributed binaries must be accompanied by the corresponding source and
-these build/port changes. Third-party dependencies may have additional
-licenses; review their notices before redistribution.
+OpenViBE and the changes in this port are covered by the GNU Affero General
+Public License, version 3 (AGPLv3). When you obtain or redistribute OpenViBE,
+please keep the upstream copyright notices and `COPYING` files. If binaries are
+distributed, the corresponding source and these porting changes must be made
+available as required by the license. Some dependencies have their own
+licenses, so check their notices as well.
 
 ## Local build
 
-1. Obtain the matching OpenViBE 3.2.0 upstream source trees and place them in
-   `work/` as described by `script/build_and_run.sh`.
+1. Get the matching OpenViBE 3.2.0 source trees and place them in `work/`, as
+   described in `script/build_and_run.sh`.
 2. Install the macOS build dependencies (CMake, GTK2 compatibility/runtime,
-   Homebrew libraries, and a C++ toolchain).
-3. Run `script/build_and_run.sh` from this repository.
+   the required Homebrew libraries, and a C++ toolchain).
+3. Run `script/build_and_run.sh` from the repository root.
 
-The script builds Designer, packages its framework/resources into an app
-bundle, installs the icon and launcher, and signs the bundle ad hoc for local
-execution. The resulting applications are written to `outputs/`.
+The script builds Designer, packages its framework and resources into an app
+bundle, installs the launcher and icon, and applies an ad-hoc signature so the
+bundle can be run locally. The resulting applications are written to
+`outputs/`.
 
 ## Included scripts
 
@@ -40,4 +44,6 @@ execution. The resulting applications are written to `outputs/`.
   troubleshooting support.
 - **OpenViBE contributors** — upstream project and original application.
 
-This is a personal macOS port and is not an official OpenViBE release.
+This is a personal macOS port and is not an official OpenViBE release. It is
+provided for experimentation and development, and may still need additional
+work for other Macs or newer macOS versions.
