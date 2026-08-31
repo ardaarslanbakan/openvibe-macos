@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+MACOS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CONTENTS_DIR="$(cd "$MACOS_DIR/.." && pwd)"
+
+export OV_PATH_ROOT="$CONTENTS_DIR/Resources"
+export OV_PATH_BIN="$MACOS_DIR"
+export OV_PATH_LIB="$CONTENTS_DIR/Frameworks"
+export OV_PATH_DATA="$CONTENTS_DIR/Resources/share/openvibe"
+
+exec "$MACOS_DIR/openvibe-designer" "$@"

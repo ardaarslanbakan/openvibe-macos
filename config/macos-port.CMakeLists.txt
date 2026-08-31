@@ -1,0 +1,214 @@
+cmake_minimum_required(VERSION 3.20)
+
+# Minimal macOS entry point for an OpenViBE SDK-only build.
+# The upstream SDK CMakeLists is normally included by a larger, Linux-oriented
+# build harness; this wrapper supplies its expected shared variables.
+project(OpenViBEMacOSPort LANGUAGES C CXX)
+
+set(CMAKE_MACOSX_RPATH ON)
+# The development install uses bin/../lib; the .app package uses
+# Contents/MacOS/../Frameworks.  Keep both locations so the same binary works
+# in either layout.
+set(CMAKE_INSTALL_RPATH "@executable_path/../lib;@executable_path/../Frameworks")
+
+set(OPENVIBE_MAJOR_VERSION 3)
+set(OPENVIBE_MINOR_VERSION 2)
+set(OPENVIBE_PATCH_VERSION 0)
+set(CMAKE_MODULE_PATH_BASE "${CMAKE_CURRENT_SOURCE_DIR}/sdk/cmake-modules")
+set(Flag_VerboseOutput ON)
+set(DIST_ROOT "${CMAKE_BINARY_DIR}/dist")
+set(DIST_BINDIR "${DIST_ROOT}/bin")
+set(DIST_LIBDIR "${DIST_ROOT}/lib")
+set(DIST_INCLUDEDIR "${DIST_ROOT}/include")
+set(DIST_DATADIR "${DIST_ROOT}/share")
+set(BUILD_DATADIR "${CMAKE_BINARY_DIR}/data")
+
+add_compile_definitions(
+  TARGET_BUILDTYPE_Release
+  OV_CMAKE_PATH_ROOT="${DIST_ROOT}"
+  OV_CMAKE_PATH_BIN="${DIST_BINDIR}"
+  OV_CMAKE_PATH_DATA="${DIST_DATADIR}/openvibe"
+  OV_CMAKE_PATH_LIB="${DIST_LIBDIR}"
+)
+
+set(KERNEL_FOLDER "Kernel")
+set(MISC_FOLDER "Miscellaneous")
+set(MODULES_FOLDER "Modules")
+set(PLUGINS_FOLDER "Plugins")
+set(APP_FOLDER "Applications")
+set(TESTS_FOLDER "Tests")
+set(VALIDATION_FOLDER "Validation")
+
+function(set_version)
+endfunction()
+
+function(debug_message)
+  message(STATUS "${ARGV}")
+endfunction()
+
+function(ov_configure_rc)
+endfunction()
+
+find_package(Boost CONFIG REQUIRED COMPONENTS filesystem regex system thread chrono serialization)
+find_package(Eigen3 CONFIG REQUIRED)
+find_package(EXPAT REQUIRED)
+find_package(XercesC CONFIG REQUIRED)
+find_package(PkgConfig REQUIRED)
+find_package(tinyxml2 CONFIG REQUIRED)
+find_package(ZLIB REQUIRED)
+pkg_check_modules(GTK2 REQUIRED IMPORTED_TARGET gtk+-2.0)
+add_library(gtk2 INTERFACE)
+target_link_libraries(gtk2 INTERFACE PkgConfig::GTK2)
+
+add_subdirectory(sdk)
+add_subdirectory(
+  "${CMAKE_CURRENT_SOURCE_DIR}/../openvibe-3.2.0-src/extras/modules/geometry"
+  "${CMAKE_BINARY_DIR}/extras/modules/geometry"
+)
+add_subdirectory(
+  "${CMAKE_CURRENT_SOURCE_DIR}/../openvibe-3.2.0-src/extras/plugins/processing/acquisition"
+  "${CMAKE_BINARY_DIR}/extras/acquisition"
+)
+add_subdirectory(
+  "${CMAKE_CURRENT_SOURCE_DIR}/../openvibe-3.2.0-src/extras/plugins/processing/examples"
+  "${CMAKE_BINARY_DIR}/extras/examples"
+)
+add_subdirectory(
+  "${CMAKE_CURRENT_SOURCE_DIR}/../openvibe-3.2.0-src/extras/plugins/processing/data-generation"
+  "${CMAKE_BINARY_DIR}/extras/data-generation"
+)
+add_subdirectory(
+  "${CMAKE_CURRENT_SOURCE_DIR}/../openvibe-3.2.0-src/extras/plugins/processing/evaluation"
+  "${CMAKE_BINARY_DIR}/extras/evaluation"
+)
+add_subdirectory(
+  "${CMAKE_CURRENT_SOURCE_DIR}/../openvibe-3.2.0-src/extras/plugins/processing/features-selection"
+  "${CMAKE_BINARY_DIR}/extras/features-selection"
+)
+add_subdirectory(
+  "${CMAKE_CURRENT_SOURCE_DIR}/../openvibe-3.2.0-src/extras/plugins/processing/artifact"
+  "${CMAKE_BINARY_DIR}/extras/artifact"
+)
+add_subdirectory(
+  "${CMAKE_CURRENT_SOURCE_DIR}/../openvibe-3.2.0-src/extras/plugins/processing/network-io"
+  "${CMAKE_BINARY_DIR}/extras/network-io"
+)
+add_subdirectory(
+  "${CMAKE_CURRENT_SOURCE_DIR}/../openvibe-3.2.0-src/extras/plugins/processing/stimulation"
+  "${CMAKE_BINARY_DIR}/extras/stimulation"
+)
+add_subdirectory(
+  "${CMAKE_CURRENT_SOURCE_DIR}/../openvibe-3.2.0-src/extras/plugins/processing/riemannian"
+  "${CMAKE_BINARY_DIR}/extras/riemannian"
+)
+add_subdirectory(
+  "${CMAKE_CURRENT_SOURCE_DIR}/../openvibe-3.2.0-src/extras/plugins/processing/signal-processing"
+  "${CMAKE_BINARY_DIR}/extras/signal-processing"
+)
+add_subdirectory(
+  "${CMAKE_CURRENT_SOURCE_DIR}/../openvibe-3.2.0-src/extras/plugins/processing/simple-visualization"
+  "${CMAKE_BINARY_DIR}/extras/simple-visualization"
+)
+target_compile_definitions(openvibe-plugins-examples PRIVATE
+  TARGET_ARCHITECTURE_x64 TARGET_OS_MacOS TARGET_COMPILER_LLVM
+  OV_CONFIG_SUBDIR=""
+  OV_CMAKE_PATH_ROOT="${DIST_ROOT}"
+  OV_CMAKE_PATH_BIN="${DIST_BINDIR}"
+  OV_CMAKE_PATH_DATA="${DIST_DATADIR}/openvibe"
+  OV_CMAKE_PATH_LIB="${DIST_LIBDIR}"
+  OV_PROJECT_NAME="OpenVIBE_SDK"
+  OV_VERSION_MAJOR="3" OV_VERSION_MINOR="2" OV_VERSION_PATCH="0"
+)
+target_compile_definitions(openvibe-plugins-data-generation PRIVATE
+  TARGET_ARCHITECTURE_x64 TARGET_OS_MacOS TARGET_COMPILER_LLVM
+  OV_CONFIG_SUBDIR=""
+  OV_CMAKE_PATH_ROOT="${DIST_ROOT}" OV_CMAKE_PATH_BIN="${DIST_BINDIR}"
+  OV_CMAKE_PATH_DATA="${DIST_DATADIR}" OV_CMAKE_PATH_LIB="${DIST_LIBDIR}"
+  OV_PROJECT_NAME="OpenVIBE_SDK"
+  OV_VERSION_MAJOR="3" OV_VERSION_MINOR="2" OV_VERSION_PATCH="0"
+)
+target_compile_definitions(openvibe-plugins-evaluation PRIVATE
+  TARGET_ARCHITECTURE_x64 TARGET_OS_MacOS TARGET_COMPILER_LLVM
+  OV_CONFIG_SUBDIR=""
+  OV_CMAKE_PATH_ROOT="${DIST_ROOT}" OV_CMAKE_PATH_BIN="${DIST_BINDIR}"
+  OV_CMAKE_PATH_DATA="${DIST_DATADIR}/openvibe" OV_CMAKE_PATH_LIB="${DIST_LIBDIR}"
+  OV_PROJECT_NAME="OpenVIBE_SDK"
+  OV_VERSION_MAJOR="3" OV_VERSION_MINOR="2" OV_VERSION_PATCH="0"
+)
+target_compile_definitions(openvibe-plugins-features-selection PRIVATE
+  TARGET_ARCHITECTURE_x64 TARGET_OS_MacOS TARGET_COMPILER_LLVM
+  OV_CONFIG_SUBDIR=""
+  OV_CMAKE_PATH_ROOT="${DIST_ROOT}" OV_CMAKE_PATH_BIN="${DIST_BINDIR}"
+  OV_CMAKE_PATH_DATA="${DIST_DATADIR}/openvibe" OV_CMAKE_PATH_LIB="${DIST_LIBDIR}"
+  OV_PROJECT_NAME="OpenVIBE_SDK"
+  OV_VERSION_MAJOR="3" OV_VERSION_MINOR="2" OV_VERSION_PATCH="0"
+)
+target_compile_definitions(openvibe-plugins-artifact PRIVATE
+  TARGET_ARCHITECTURE_x64 TARGET_OS_MacOS TARGET_COMPILER_LLVM
+  OV_CONFIG_SUBDIR=""
+  OV_CMAKE_PATH_ROOT="${DIST_ROOT}" OV_CMAKE_PATH_BIN="${DIST_BINDIR}"
+  OV_CMAKE_PATH_DATA="${DIST_DATADIR}/openvibe" OV_CMAKE_PATH_LIB="${DIST_LIBDIR}"
+  OV_PROJECT_NAME="OpenVIBE_SDK"
+  OV_VERSION_MAJOR="3" OV_VERSION_MINOR="2" OV_VERSION_PATCH="0"
+)
+target_compile_definitions(openvibe-plugins-network-io PRIVATE
+  TARGET_ARCHITECTURE_x64 TARGET_OS_MacOS TARGET_COMPILER_LLVM TARGET_HAS_Boost
+  OV_CONFIG_SUBDIR="" BOOST_DATE_TIME_NO_LIB
+  OV_CMAKE_PATH_ROOT="${DIST_ROOT}" OV_CMAKE_PATH_BIN="${DIST_BINDIR}"
+  OV_CMAKE_PATH_DATA="${DIST_DATADIR}/openvibe" OV_CMAKE_PATH_LIB="${DIST_LIBDIR}"
+  OV_PROJECT_NAME="OpenVIBE_SDK"
+  OV_VERSION_MAJOR="3" OV_VERSION_MINOR="2" OV_VERSION_PATCH="0"
+)
+target_compile_definitions(openvibe-plugins-stimulation PRIVATE
+  TARGET_ARCHITECTURE_x64 TARGET_OS_MacOS TARGET_COMPILER_LLVM
+  OV_CONFIG_SUBDIR=""
+  OV_CMAKE_PATH_ROOT="${DIST_ROOT}" OV_CMAKE_PATH_BIN="${DIST_BINDIR}"
+  OV_CMAKE_PATH_DATA="${DIST_DATADIR}/openvibe" OV_CMAKE_PATH_LIB="${DIST_LIBDIR}"
+  OV_PROJECT_NAME="OpenVIBE_SDK"
+  OV_VERSION_MAJOR="3" OV_VERSION_MINOR="2" OV_VERSION_PATCH="0"
+)
+target_compile_definitions(openvibe-plugins-riemannian PRIVATE
+  TARGET_ARCHITECTURE_x64 TARGET_OS_MacOS TARGET_COMPILER_LLVM
+  OV_CONFIG_SUBDIR=""
+  OV_CMAKE_PATH_ROOT="${DIST_ROOT}" OV_CMAKE_PATH_BIN="${DIST_BINDIR}"
+  OV_CMAKE_PATH_DATA="${DIST_DATADIR}/openvibe" OV_CMAKE_PATH_LIB="${DIST_LIBDIR}"
+  OV_PROJECT_NAME="OpenVIBE_SDK"
+  OV_VERSION_MAJOR="3" OV_VERSION_MINOR="2" OV_VERSION_PATCH="0"
+)
+pkg_check_modules(FFTW3 REQUIRED IMPORTED_TARGET fftw3)
+target_compile_definitions(openvibe-plugins-signal-processing PRIVATE
+  TARGET_ARCHITECTURE_x64 TARGET_OS_MacOS TARGET_COMPILER_LLVM
+  TARGET_HAS_ThirdPartyFFTW3 TARGET_HAS_ThirdPartyEIGEN
+  OV_CONFIG_SUBDIR=""
+  OV_CMAKE_PATH_ROOT="${DIST_ROOT}" OV_CMAKE_PATH_BIN="${DIST_BINDIR}"
+  OV_CMAKE_PATH_DATA="${DIST_DATADIR}/openvibe" OV_CMAKE_PATH_LIB="${DIST_LIBDIR}"
+  OV_PROJECT_NAME="OpenVIBE_SDK"
+  OV_VERSION_MAJOR="3" OV_VERSION_MINOR="2" OV_VERSION_PATCH="0"
+)
+target_link_libraries(openvibe-plugins-signal-processing PkgConfig::FFTW3 Eigen3::Eigen)
+
+target_compile_definitions(openvibe-plugins-simple-visualization PRIVATE
+  TARGET_ARCHITECTURE_x64 TARGET_OS_MacOS TARGET_COMPILER_LLVM TARGET_HAS_Boost
+  OV_CONFIG_SUBDIR=""
+  OV_CMAKE_PATH_ROOT="${DIST_ROOT}" OV_CMAKE_PATH_BIN="${DIST_BINDIR}"
+  OV_CMAKE_PATH_DATA="${DIST_DATADIR}" OV_CMAKE_PATH_LIB="${DIST_LIBDIR}"
+  OV_PROJECT_NAME="OpenVIBE_SDK"
+  OV_VERSION_MAJOR="3" OV_VERSION_MINOR="2" OV_VERSION_PATCH="0"
+)
+target_link_libraries(openvibe-plugins-simple-visualization gtk2 Boost::filesystem Boost::system)
+
+target_compile_definitions(openvibe-plugins-acquisition PRIVATE
+  TARGET_ARCHITECTURE_x64
+  TARGET_OS_MacOS
+  TARGET_COMPILER_LLVM
+  OV_CONFIG_SUBDIR=""
+  OV_CMAKE_PATH_ROOT="${DIST_ROOT}"
+  OV_CMAKE_PATH_BIN="${DIST_BINDIR}"
+  OV_CMAKE_PATH_DATA="${DIST_DATADIR}/openvibe"
+  OV_CMAKE_PATH_LIB="${DIST_LIBDIR}"
+  OV_PROJECT_NAME="OpenVIBE_SDK"
+  OV_VERSION_MAJOR="3"
+  OV_VERSION_MINOR="2"
+  OV_VERSION_PATCH="0"
+)
+add_subdirectory(designer)

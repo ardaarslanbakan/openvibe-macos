@@ -1,0 +1,17 @@
+.DS_Store
+
+# Local source archives, dependency environments, and build trees
+work/
+CMakeFiles/
+outputs/
+*.tar.gz
+*.tar.bz2
+*.tar.xz
+*.dmg
+
+# Generated logs and IDE metadata
+*.log
+.codex/
+.idea/
+.vscode/
+
