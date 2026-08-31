@@ -1,7 +1,7 @@
 # OpenViBE macOS Port
 
 <p align="center">
-  <img src="docs/images/logo.svg" width="240" alt="OpenViBE personal macOS port">
+  <img src="docs/images/logo-wide.svg" width="240" alt="OpenViBE macOS port">
 </p>
 
 [![License](https://img.shields.io/badge/license-AGPL--3.0-blue)](https://www.gnu.org/licenses/agpl-3.0.html)
