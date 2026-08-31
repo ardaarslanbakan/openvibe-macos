@@ -54,3 +54,14 @@ diff --git a/applications/platform/designer/src/CInterfacedScenario.cpp b/applic
 +		gdk_draw_rectangle(GTK_WIDGET(m_scenarioDrawingArea)->window, runningGC, TRUE, 0, 0, x, y);
 +		g_object_unref(runningGC);
  	}
+ 	// TODO: optimize this as this will be called endlessly
+ 	/*
+@@ -2406,7 +2417,7 @@
+                         id.fromString(box->getAttributeValue(OVP_AttributeId_Metabox_ID));
+
+                         std::string path(m_kernelCtx.getMetaboxManager().getMetaboxFilePath(id).toASCIIString());
+-                        std::string ext    = boost::filesystem::extension(path);
++							std::string ext    = boost::filesystem::path(path).extension().string();
+ 						bool canImportFile = false;
+
+ 						CString fileExt;
