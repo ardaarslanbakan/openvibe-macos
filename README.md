@@ -40,4 +40,4 @@ execution. The resulting applications are written to `outputs/`.
   troubleshooting support.
 - **OpenViBE contributors** — upstream project and original application.
 
-This is a community macOS port and is not an official OpenViBE release.
+This is a personal macOS port and is not an official OpenViBE release.
