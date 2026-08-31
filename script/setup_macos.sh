@@ -9,6 +9,7 @@ DESIGNER_DIR="${OPENVIBE_DESIGNER_DIR:-$WORK_DIR/designer-master}"
 SDK_DIR="${OPENVIBE_SDK_DIR:-$WORK_DIR/sdk-master}"
 OPENVIBE_REPO_URL="${OPENVIBE_REPO_URL:-https://github.com/dioptre/openvibe.git}"
 PATCH_FILE="$ROOT_DIR/patches/designer-macos-complete.patch"
+MEMORY_PATCH_FILE="$ROOT_DIR/patches/designer-memory-fix.patch"
 ACQUISITION_PATCH_FILE="$ROOT_DIR/patches/acquisition-server-macos.patch"
 INSTALL_DEPS=0
 CHECK_ONLY=0
@@ -90,6 +91,19 @@ if [[ -f "$PATCH_FILE" ]]; then
     echo "Designer macOS patch is already applied."
   else
     echo "Designer source does not match the expected revision for patches/designer-macos.patch." >&2
+    exit 1
+  fi
+fi
+
+# Bound the continuous visualization history so long-running scenarios do not
+# exhaust macOS application memory.
+if [[ -f "$MEMORY_PATCH_FILE" ]]; then
+  if patch --batch --dry-run -l -p1 -d "$DESIGNER_DIR" < "$MEMORY_PATCH_FILE" >/dev/null 2>&1; then
+    patch --batch -l -p1 -d "$DESIGNER_DIR" < "$MEMORY_PATCH_FILE"
+  elif patch --batch --dry-run -l -R -p1 -d "$DESIGNER_DIR" < "$MEMORY_PATCH_FILE" >/dev/null 2>&1; then
+    echo "Designer memory-safety patch is already applied."
+  else
+    echo "Designer memory-safety patch did not match this source revision." >&2
     exit 1
   fi
 fi

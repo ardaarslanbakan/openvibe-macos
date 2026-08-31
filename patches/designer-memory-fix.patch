@@ -1,0 +1,56 @@
+diff --git a/applications/platform/designer/src/CLogListenerDesigner.cpp b/applications/platform/designer/src/CLogListenerDesigner.cpp
+--- a/applications/platform/designer/src/CLogListenerDesigner.cpp
++++ b/applications/platform/designer/src/CLogListenerDesigner.cpp
+@@ -276,5 +276,9 @@
+ void CLogListenerDesigner::log(const Kernel::ELogLevel level)
+ {
++	// Bound retained GUI log buffers so long-running scenarios cannot exhaust memory.
++	constexpr size_t MaxStoredLogs = 10000;
++	if (m_storedLogs.size() >= MaxStoredLogs) { ClearMessages(); }
++
+ 	// GtkTextIter textIter;
+ 	// gtk_text_buffer_get_end_iter(m_Buffer, &l_oTextIter);
+ 
+diff --git a/plugins/visualization/ovp-advanced-visualization/src/TBoxAlgorithmContinuousViz.hpp b/plugins/visualization/ovp-advanced-visualization/src/TBoxAlgorithmContinuousViz.hpp
+--- a/plugins/visualization/ovp-advanced-visualization/src/TBoxAlgorithmContinuousViz.hpp
++++ b/plugins/visualization/ovp-advanced-visualization/src/TBoxAlgorithmContinuousViz.hpp
+@@ -258,7 +258,11 @@
+ 	if (rendererSampleCount != 0 && rendererSampleCount != m_Renderer->GetSampleCount()) {
+ 		m_Renderer->SetSampleCount(rendererSampleCount);
+ 		m_RebuildNeeded = true;
+ 		m_RefreshNeeded = true;
+ 		m_RedrawNeeded  = true;
+ 	}
++
++	// Keep continuous visualization history bounded during long-running scenarios.
++	const size_t historyToKeep = std::max<size_t>(m_Renderer->GetSampleCount() * 2, 1);
++	if (m_Renderer->GetHistoryCount() > historyToKeep) { m_Renderer->Clear(historyToKeep); }
+ 
+ 	if (m_RebuildNeeded) { m_Renderer->Rebuild(*m_RendererCtx); }
+
+diff --git a/applications/platform/designer/src/CScenarioStateStack.hpp b/applications/platform/designer/src/CScenarioStateStack.hpp
+--- a/applications/platform/designer/src/CScenarioStateStack.hpp
++++ b/applications/platform/designer/src/CScenarioStateStack.hpp
+@@ -31,5 +31,5 @@
+ 	bool IsRedoPossible();
+ 	bool Redo();
+-	void DropLastState() { m_states.pop_back(); }
++	void DropLastState() { if (!m_states.empty()) { delete m_states.back(); m_states.pop_back(); } }
+ 
+ 	bool Snapshot();
+diff --git a/applications/platform/designer/src/CScenarioStateStack.cpp b/applications/platform/designer/src/CScenarioStateStack.cpp
+--- a/applications/platform/designer/src/CScenarioStateStack.cpp
++++ b/applications/platform/designer/src/CScenarioStateStack.cpp
+@@ -72,7 +72,12 @@
+ 		m_currentState = m_states.erase(m_currentState);
+ 	}
+ 
+-	if (m_nMaximumState != 0) { while (m_states.size() >= m_nMaximumState) { m_states.erase(m_states.begin()); } }
++	if (m_nMaximumState != 0) {
++		while (m_states.size() >= m_nMaximumState) {
++			delete *m_states.begin();
++			m_states.erase(m_states.begin());
++		}
++	}
+ 
+ 	m_states.push_back(newState);

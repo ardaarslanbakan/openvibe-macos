@@ -5,7 +5,7 @@
   <key>CFBundleDisplayName</key>
   <string>OpenViBE Designer</string>
   <key>CFBundleExecutable</key>
-  <string>OpenViBE Designer</string>
+  <string>openvibe-designer</string>
   <key>CFBundleIconFile</key>
   <string>OpenViBE</string>
   <key>CFBundleIdentifier</key>
