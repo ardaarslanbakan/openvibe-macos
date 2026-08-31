@@ -10,12 +10,19 @@ recreated with the scripts in this repository.
 
 ## License
 
-OpenViBE and the changes in this port are covered by the GNU Affero General
-Public License, version 3 (AGPLv3). When you obtain or redistribute OpenViBE,
-please keep the upstream copyright notices and `COPYING` files. If binaries are
-distributed, the corresponding source and these porting changes must be made
-available as required by the license. Some dependencies have their own
-licenses, so check their notices as well.
+The OpenViBE source components used here (SDK, Designer, and Extras) are
+licensed under the GNU Affero General Public License, version 3 (AGPLv3).
+When you obtain or redistribute OpenViBE, please keep the upstream copyright
+notices and `COPYING` files. If binaries are distributed, the corresponding
+source and these porting changes must be made available as required by the
+license. Some dependencies have their own licenses, so check their notices as
+well. Unless a file says otherwise, the original porting scripts and
+configuration in this repository are intended to be distributed under AGPLv3
+as part of the port.
+
+The official project is hosted by [OpenViBE at Inria](https://gitlab.inria.fr/openvibe).
+Its [meta repository](https://github.com/dioptre/openvibe) describes the SDK,
+Designer, and Extras split and the submodule-based build layout.
 
 ## Local build
 
