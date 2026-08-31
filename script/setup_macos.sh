@@ -59,8 +59,9 @@ for path in "$SOURCE_DIR/CMakeLists.txt" "$DESIGNER_DIR/CMakeLists.txt" "$SDK_DI
 done
 
 mkdir -p "$WORK_DIR/macos-port"
-ln -sfn "../$(basename "$SDK_DIR")" "$WORK_DIR/macos-port/sdk"
-ln -sfn "../$(basename "$DESIGNER_DIR")" "$WORK_DIR/macos-port/designer"
+# Absolute links also support source checkouts located outside this repository.
+ln -sfn "$SDK_DIR" "$WORK_DIR/macos-port/sdk"
+ln -sfn "$DESIGNER_DIR" "$WORK_DIR/macos-port/designer"
 
 if ((CHECK_ONLY)); then
   echo "OpenViBE macOS prerequisites and source layout look good."
