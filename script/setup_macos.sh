@@ -8,6 +8,7 @@ SOURCE_DIR="${OPENVIBE_SOURCE_DIR:-$WORK_DIR/openvibe-3.2.0-src}"
 DESIGNER_DIR="${OPENVIBE_DESIGNER_DIR:-$WORK_DIR/designer-master}"
 SDK_DIR="${OPENVIBE_SDK_DIR:-$WORK_DIR/sdk-master}"
 OPENVIBE_REPO_URL="${OPENVIBE_REPO_URL:-https://github.com/dioptre/openvibe.git}"
+PATCH_FILE="$ROOT_DIR/patches/designer-macos.patch"
 INSTALL_DEPS=0
 CHECK_ONLY=0
 DOWNLOAD_SOURCES=0
@@ -74,6 +75,23 @@ for path in "$SOURCE_DIR/CMakeLists.txt" "$DESIGNER_DIR/CMakeLists.txt" "$SDK_DI
     exit 1
   fi
 done
+
+PATCH_TARGET="$DESIGNER_DIR/applications/platform/designer/src/CInterfacedScenario.cpp"
+if [[ -f "$PATCH_FILE" ]]; then
+  if [[ ! -f "$PATCH_TARGET" ]]; then
+    echo "The downloaded Designer source does not contain the expected legacy Designer layout." >&2
+    echo "Use a matching OpenViBE 3.2.0 Designer checkout via OPENVIBE_DESIGNER_DIR." >&2
+    exit 1
+  fi
+  if patch --batch --dry-run -l -p1 -d "$DESIGNER_DIR" < "$PATCH_FILE" >/dev/null 2>&1; then
+    patch --batch -l -p1 -d "$DESIGNER_DIR" < "$PATCH_FILE"
+  elif patch --batch --dry-run -l -R -p1 -d "$DESIGNER_DIR" >/dev/null 2>&1 < "$PATCH_FILE"; then
+    echo "Designer macOS patch is already applied."
+  else
+    echo "Designer source does not match the expected revision for patches/designer-macos.patch." >&2
+    exit 1
+  fi
+fi
 
 mkdir -p "$WORK_DIR/macos-port"
 # Absolute links also support source checkouts located outside this repository.

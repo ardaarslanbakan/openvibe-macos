@@ -1,0 +1,56 @@
+diff --git a/applications/platform/designer/src/CInterfacedScenario.cpp b/applications/platform/designer/src/CInterfacedScenario.cpp
+--- a/applications/platform/designer/src/CInterfacedScenario.cpp
++++ b/applications/platform/designer/src/CInterfacedScenario.cpp
+@@ -602,8 +602,16 @@
+ 
+ 	m_scenarioDrawingArea = GTK_DRAWING_AREA(gtk_builder_get_object(m_guiBuilder, "openvibe-scenario_drawing_area"));
+ 	m_scenarioViewport    = GTK_VIEWPORT(gtk_builder_get_object(m_guiBuilder, "openvibe-scenario_viewport"));
++	// Keep the scenario canvas readable on macOS. The native GTK theme can
++	// otherwise repaint it black when the player locks the scenario.
++	GdkColor canvasColor = { 0, 0xefff, 0xf2ff, 0xf6ff };
++	gtk_widget_set_app_paintable(GTK_WIDGET(m_scenarioDrawingArea), TRUE);
++	gtk_widget_modify_bg(GTK_WIDGET(m_scenarioDrawingArea), GTK_STATE_NORMAL, &canvasColor);
++	gtk_widget_modify_base(GTK_WIDGET(m_scenarioDrawingArea), GTK_STATE_NORMAL, &canvasColor);
++	gtk_widget_modify_bg(GTK_WIDGET(m_scenarioViewport), GTK_STATE_NORMAL, &canvasColor);
++	gtk_widget_modify_bg(GTK_WIDGET(m_notebookPageContent), GTK_STATE_NORMAL, &canvasColor);
+     gtk_drag_dest_set(GTK_WIDGET(m_scenarioDrawingArea), GTK_DEST_DEFAULT_ALL, targets.data(), gint(targets.size()), GDK_ACTION_COPY);
+-    g_signal_connect(G_OBJECT(m_scenarioDrawingArea), "expose-event", G_CALLBACK(DrawingAreaExposeCB), this);
++	g_signal_connect_after(G_OBJECT(m_scenarioDrawingArea), "expose-event", G_CALLBACK(DrawingAreaExposeCB), this);
+ 	g_signal_connect(G_OBJECT(m_scenarioDrawingArea), "drag-data-received", G_CALLBACK(DrawingAreaDragDataReceivedCB), this);
+ 	g_signal_connect(G_OBJECT(m_scenarioDrawingArea), "motion-notify-event", G_CALLBACK(DrawingAreaMotionNotifyCB), this);
+ 	g_signal_connect(G_OBJECT(m_scenarioDrawingArea), "button-press-event", G_CALLBACK(DrawingAreaButtonPressedCB), this);
+@@ -1780,6 +1788,11 @@
+ 	gint x, y;
+ 
+ 	gdk_window_get_size(GTK_WIDGET(m_scenarioDrawingArea)->window, &x, &y);
++	GdkColor canvasColor = { 0, 0xefff, 0xf2ff, 0xf6ff };
++	GdkGC* canvasGC = gdk_gc_new(GTK_WIDGET(m_scenarioDrawingArea)->window);
++	gdk_gc_set_rgb_fg_color(canvasGC, &canvasColor);
++	gdk_draw_rectangle(GTK_WIDGET(m_scenarioDrawingArea)->window, canvasGC, TRUE, 0, 0, x, y);
++	g_object_unref(canvasGC);
+ 	if (m_stencilBuffer) { g_object_unref(m_stencilBuffer); }
+ 	m_stencilBuffer = gdk_pixmap_new(GTK_WIDGET(m_scenarioDrawingArea)->window, x, y, -1);
+ 
+@@ -1790,16 +1803,14 @@
+     g_object_unref(stencilGC);
+ 
+     if (this->IsLocked()) {
+-        color.pixel = 0;
+-        color.red   = 0x0f00;
+-        color.green = 0x0f00;
+-        color.blue  = 0x0f00;
+-
+-        GdkGC* drawGC = gdk_gc_new(GTK_WIDGET(m_scenarioDrawingArea)->window);
+-        gdk_gc_set_rgb_fg_color(drawGC, &color);
+-        gdk_gc_set_function(drawGC, GDK_XOR);
+-        gdk_draw_rectangle(GTK_WIDGET(m_scenarioDrawingArea)->window, drawGC, TRUE, 0, 0, x, y);
+-        g_object_unref(drawGC);
++		// Use a subtle deterministic tint to indicate the running/locked state.
++		// The legacy full-window XOR overlay produces a black canvas on macOS.
++		GdkColor runningColor = { 0, 0xdfff, 0xebff, 0xf7ff };
++		GdkGC* runningGC = gdk_gc_new(GTK_WIDGET(m_scenarioDrawingArea)->window);
++		gdk_gc_set_rgb_fg_color(runningGC, &runningColor);
++		gdk_gc_set_function(runningGC, GDK_COPY);
++		gdk_draw_rectangle(GTK_WIDGET(m_scenarioDrawingArea)->window, runningGC, TRUE, 0, 0, x, y);
++		g_object_unref(runningGC);
+ 	}
