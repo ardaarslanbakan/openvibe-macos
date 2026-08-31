@@ -9,6 +9,7 @@ DESIGNER_DIR="${OPENVIBE_DESIGNER_DIR:-$WORK_DIR/designer-master}"
 SDK_DIR="${OPENVIBE_SDK_DIR:-$WORK_DIR/sdk-master}"
 OPENVIBE_REPO_URL="${OPENVIBE_REPO_URL:-https://github.com/dioptre/openvibe.git}"
 PATCH_FILE="$ROOT_DIR/patches/designer-macos-complete.patch"
+ACQUISITION_PATCH_FILE="$ROOT_DIR/patches/acquisition-server-macos.patch"
 INSTALL_DEPS=0
 CHECK_ONLY=0
 DOWNLOAD_SOURCES=0
@@ -90,6 +91,26 @@ if [[ -f "$PATCH_FILE" ]]; then
   else
     echo "Designer source does not match the expected revision for patches/designer-macos.patch." >&2
     exit 1
+  fi
+fi
+
+# Apply the small cross-platform Acquisition Server fixes when the downloaded
+# source tree contains the current server implementation. Older split
+# checkouts may not contain these paths, so leave them unchanged and let the
+# normal source compatibility checks report the limitation.
+ACQUISITION_ROOT=""
+if [[ -f "$SOURCE_DIR/extras/applications/platform/acquisition-server/CInitApp.cpp" ]]; then
+  ACQUISITION_ROOT="$SOURCE_DIR"
+elif [[ -f "$DESIGNER_DIR/extras/applications/platform/acquisition-server/CInitApp.cpp" ]]; then
+  ACQUISITION_ROOT="$DESIGNER_DIR"
+fi
+if [[ -n "$ACQUISITION_ROOT" && -f "$ACQUISITION_PATCH_FILE" ]]; then
+  if patch --batch --dry-run -l -p1 -d "$ACQUISITION_ROOT" < "$ACQUISITION_PATCH_FILE" >/dev/null 2>&1; then
+    patch --batch -l -p1 -d "$ACQUISITION_ROOT" < "$ACQUISITION_PATCH_FILE"
+  elif patch --batch --dry-run -l -R -p1 -d "$ACQUISITION_ROOT" >/dev/null 2>&1 < "$ACQUISITION_PATCH_FILE"; then
+    echo "Acquisition Server macOS patch is already applied."
+  else
+    echo "Acquisition Server source does not match the expected patch revision; continuing without it." >&2
   fi
 fi
 

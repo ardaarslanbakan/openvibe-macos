@@ -1,0 +1,21 @@
+diff --git a/extras/applications/platform/acquisition-server/CInitApp.cpp b/extras/applications/platform/acquisition-server/CInitApp.cpp
+--- a/extras/applications/platform/acquisition-server/CInitApp.cpp
++++ b/extras/applications/platform/acquisition-server/CInitApp.cpp
+@@ -429,9 +429,13 @@ void CInitApp::loadSingleService(const std::string& serviceName, bool isExtra)
+ {
+-    std::string fullPath = getServiceFolderPath() + "\\" + serviceName + DLL_EXTENSION;
++    // Use filesystem path joining so bundled services load on every platform.
++    const fs::path fullPath = fs::path(getServiceFolderPath()) / (serviceName + DLL_EXTENSION);
+ 
+-    OSAL::dlib handle = OSAL::loadLibrary(fullPath);
++    OSAL::dlib handle = OSAL::loadLibrary(fullPath.string());
+diff --git a/extras/plugins/server-extensions/network-service/NetService.cpp b/extras/plugins/server-extensions/network-service/NetService.cpp
+--- a/extras/plugins/server-extensions/network-service/NetService.cpp
++++ b/extras/plugins/server-extensions/network-service/NetService.cpp
+@@ -56,7 +56,9 @@ NetService::NetService()
+   d->port->setName("Acquisition Server Port");
+   d->port->setDescription("Port for the Acquisition TCP Server.");
+-  d->port->setValue(8088);
++  // Designer's Acquisition Client expects the legacy OpenViBE default.
++  d->port->setValue(1024);
+   d->port->setMin(1024);
