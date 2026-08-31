@@ -26,8 +26,11 @@ Designer, and Extras split and the submodule-based build layout.
 
 ## Local build
 
-1. Get the matching OpenViBE 3.2.0 source trees and place them in `work/`.
-2. Run `script/setup_macos.sh --install-deps` from the repository root. The
+1. Get the matching OpenViBE 3.2.0 source trees and place them in `work/`, or
+   let the setup script download the upstream repository with
+   `--download-sources`.
+2. Run `script/setup_macos.sh --download-sources --install-deps` from the
+   repository root. The
    script checks the source layout, creates the required links, builds Designer,
    and launches the packaged app.
 
