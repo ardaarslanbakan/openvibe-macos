@@ -49,6 +49,15 @@ bundle, installs the launcher and icon, and applies an ad-hoc signature so the
 bundle can be run locally. The resulting applications are written to
 `outputs/`.
 
+## Known limitations
+
+Designer and the included test generators are the working part of this port.
+The Acquisition Server is currently experimental and should not be considered
+ready for real hardware. Driver support still needs to be added, and there are
+remaining connection, packaging, and runtime issues to fix before it can be
+used reliably with EEG amplifiers. The acquisition-server packaging script is
+kept here to make that work easier to continue.
+
 ## Included scripts
 
 - `script/build_and_run.sh` — configure, build, package, and launch Designer
